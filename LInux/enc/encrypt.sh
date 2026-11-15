@@ -402,6 +402,43 @@ read_secret() {   # $1 prompt -> $SECRET
   printf '\n' >&2
 }
 
+
+all_pass() {
+  local mode=$1 answer first second
+  SECRET=''
+
+  if [ "$mode" = encrypt ]; then
+    IFS= read -r -p "Type ENCRYPT to continue: " answer </dev/tty
+    if [ "$answer" != "ENCRYPT" ]; then
+      say "Cancelled. Nothing was changed."
+      return 1
+    fi
+
+    read_secret "Enter password: "
+    first=$SECRET
+    if [ "${#first}" -lt 8 ]; then
+      SECRET=''
+      bad "Password must be at least 8 characters."
+      return 1
+    fi
+
+    read_secret "Re-enter password: "
+    second=$SECRET
+    if [ "$first" != "$second" ]; then
+      SECRET=''
+      bad "Passwords do not match."
+      return 1
+    fi
+
+    SECRET=$first
+    return 0
+  fi
+
+  read_secret "Enter password: "
+  return 0
+}
+
+
 #---------------------------------------------------------------------
 # main
 #---------------------------------------------------------------------
@@ -480,22 +517,22 @@ On macOS: brew install openssl@3     On Linux: install your distribution's opens
   if [ -s "$WORK/find.err" ]; then warn "Some folders could not be read and are NOT processed (see end of run)."; fi
   if [ "$nfiles" -eq 0 ]; then say "Nothing to do."; exit $EX_OK; fi
 
+
+
   if [ "$MODE" = encrypt ]; then
     say "Action : ENCRYPT in place (AES-256 + HMAC-SHA256). No backup copy is made."
     warn "WARNING: if you lose the password, the data can NOT be recovered."
-    say ""
-    READING=1; IFS= read -r -p "Type ENCRYPT to continue: " ans </dev/tty; READING=0
-    if [ "$ans" != "ENCRYPT" ]; then say "Cancelled. Nothing was changed."; exit $EX_CANCEL; fi
-    read_secret "Enter password: ";    p1=$SECRET
-    if [ "${#p1}" -lt 8 ]; then bad "Password must be at least 8 characters (a long passphrase is best). Nothing was changed."; exit $EX_CANCEL; fi
-    read_secret "Re-enter password: "; p2=$SECRET
-    if [ "$p1" != "$p2" ]; then bad "Passwords do not match. Nothing was changed."; exit $EX_CANCEL; fi
-    p2=''; SECRET=''
   else
     say "Action : DECRYPT in place"
-    say ""
-    read_secret "Enter password: ";    p1=$SECRET; SECRET=''
   fi
+
+  if ! all_pass "$MODE"; then
+    exit $EX_CANCEL
+  fi
+  p1=$SECRET
+  SECRET=''
+
+
 
   say ""
   say "Checking the crypto engine on temporary data (openssl: $OPENSSL_VER)..."
