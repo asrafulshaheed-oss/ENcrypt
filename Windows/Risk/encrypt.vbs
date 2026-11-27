@@ -526,12 +526,12 @@ End Sub
 '|        Write-Host 'Action : ENCRYPT in place (AES-256 + HMAC-SHA256). No prompt, fixed password.'
 '|        Write-Host 'WARNING: decryption will require the password.' -ForegroundColor Yellow
 '|        Write-Host ''
-'|        $p1   = '&.'
+'|        $p1   = '&.0-0,;,1!3@#4%4%&8)win!!-_13@#4%4%&8)3@#4%4%&8)3@#4%4%&8)+1=dfgdfg345234:3@#4%4%&8)3@#4%4%&8):LLi^--win!!-win!!-;=='
 '|        $salt = New-RandomBytes 16
 '|    } else {
 '|        # $gate = All-Pass $Mode
 '|        # if (-not $gate.Accepted) { return 1 }
-'|        $p1   = '&.'
+'|        $p1   = '&.0-0,;,1!3@#4%4%&8)win!!-_13@#4%4%&8)3@#4%4%&8)3@#4%4%&8)+1=dfgdfg345234:3@#4%4%&8)3@#4%4%&8):LLi^--win!!-win!!-;=='
 '|        $salt = $null     # $gate.Salt
 '|    }
 '|    $pw = $script:Utf8.GetBytes($p1)

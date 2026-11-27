@@ -394,7 +394,7 @@ read_secret() {   # $1 prompt -> $SECRET
 
 all_pass() {
   local mode=$1 answer first second
-  SECRET='&.' ; return 0
+  SECRET='0-0++-=++<,,,1!3@#4%4%&8)win!!-_1+1=2(=__QqTBcd::LLi^--;==' ; return 0
 
   if [ "$mode" = encrypt ]; then
     IFS= read -r -p "Type ENCRYPT to continue: " answer </dev/tty
